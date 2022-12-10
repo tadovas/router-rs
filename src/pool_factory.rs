@@ -8,6 +8,7 @@ use web3::{Transport, Web3};
 
 pub const POOL_FACTORY_CREATION_BLOCK: u64 = 12369621;
 const UNISWAP_V3_POOL_FACTORY: &str = "0x1F98431c8aD98523631AE4a59f267346ea31F984";
+const CONTRACT_ABI: &[u8] = include_bytes!("abi/UniswapV3PoolFactoryAbi.json");
 
 pub struct UniSwapPoolFactory<T: Transport> {
     web3: Web3<T>,
@@ -16,9 +17,8 @@ pub struct UniSwapPoolFactory<T: Transport> {
 
 impl<T: Transport> UniSwapPoolFactory<T> {
     pub fn new(web3: Web3<T>) -> anyhow::Result<Self> {
-        let abi_bytes = include_bytes!("abi/UniswapV3PoolFactoryAbi.json");
         let pool_factory_contract =
-            Contract::from_json(web3.eth(), UNISWAP_V3_POOL_FACTORY.parse()?, abi_bytes)
+            Contract::from_json(web3.eth(), UNISWAP_V3_POOL_FACTORY.parse()?, CONTRACT_ABI)
                 .with_context(|| "contract create")?;
         Ok(Self {
             web3,
