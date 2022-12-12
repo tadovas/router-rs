@@ -1,7 +1,6 @@
 use anyhow::Context;
 use clap::Parser;
 use router_rs::erc20_token::{Erc20TokenFinder, Token};
-use router_rs::pool;
 use router_rs::pool_factory;
 use router_rs::pool_factory::PoolCreationEvent;
 use serde::{Deserialize, Serialize};
@@ -69,7 +68,6 @@ async fn main() -> anyhow::Result<()> {
     ));
 
     for pool_creation_event in pool_creation_events {
-        let web3 = web3.clone();
         let token_lookup = token_lookup.clone();
         let permit = task_limiter
             .clone()
@@ -77,7 +75,7 @@ async fn main() -> anyhow::Result<()> {
             .await
             .with_context(|| "semaphore permit aquire")?;
         task_set.spawn(async move {
-            let res = build_pool_descriptor(web3, pool_creation_event, token_lookup).await;
+            let res = build_pool_descriptor(pool_creation_event, token_lookup).await;
             drop(permit);
             res
         });
@@ -101,26 +99,19 @@ async fn main() -> anyhow::Result<()> {
 }
 
 async fn build_pool_descriptor<T: Transport>(
-    web3: Web3<T>,
     pool_creation_event: PoolCreationEvent,
     token_lookup: Erc20TokenFinder<T>,
 ) -> anyhow::Result<PoolDescriptor> {
-    let pool_descriptor = pool::Pool::new(web3, pool_creation_event.pool_address)
-        .with_context(|| format!("pool {} creation", pool_creation_event.pool_address))?
-        .descriptor()
-        .await
-        .with_context(|| format!("pool {} descriptor fetch", pool_creation_event.pool_address))?;
-
     Ok(PoolDescriptor {
         address: pool_creation_event.pool_address,
         token0: token_lookup
-            .find(pool_descriptor.token0)
+            .find(pool_creation_event.token0_address)
             .await
-            .with_context(|| format!("token: {} lookup", pool_descriptor.token0))?,
+            .with_context(|| format!("token: {} lookup", pool_creation_event.token0_address))?,
         token1: token_lookup
-            .find(pool_descriptor.token1)
+            .find(pool_creation_event.token1_address)
             .await
-            .with_context(|| format!("token: {} lookup", pool_descriptor.token1))?,
-        fee: pool_descriptor.fee,
+            .with_context(|| format!("token: {} lookup", pool_creation_event.token1_address))?,
+        fee: pool_creation_event.fee,
     })
 }

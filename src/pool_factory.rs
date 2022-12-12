@@ -2,6 +2,7 @@ use anyhow::{anyhow, Context};
 
 use ethabi::{Log, RawLog, Token};
 use std::collections::HashMap;
+use web3::contract::tokens::Tokenizable;
 use web3::contract::Contract;
 use web3::types::{Address, BlockNumber, FilterBuilder};
 use web3::{Transport, Web3};
@@ -65,6 +66,7 @@ pub struct PoolCreationEvent {
     pub token0_address: Address,
     pub token1_address: Address,
     pub pool_address: Address,
+    pub fee: u32,
 }
 
 impl TryFrom<Log> for PoolCreationEvent {
@@ -76,24 +78,22 @@ impl TryFrom<Log> for PoolCreationEvent {
             param_map.insert(log_param.name, log_param.value);
         }
 
-        fn extract_address_parameter(
+        fn extract_parameter<R: Tokenizable>(
             param_map: &HashMap<String, Token>,
             name: &str,
-        ) -> anyhow::Result<Address> {
+        ) -> anyhow::Result<R> {
             param_map
                 .get(name)
-                .map(|t| match t {
-                    Token::Address(ref addr) => Ok(Address::from(addr.0)),
-                    _ => Err(anyhow!("unexpected param type for: {}", name)),
-                })
+                .map(|t| R::from_token(t.clone()))
                 .transpose()?
                 .ok_or_else(|| anyhow!("missing parameter for: {}", name))
         }
 
         Ok(Self {
-            token0_address: extract_address_parameter(&param_map, "token0")?,
-            token1_address: extract_address_parameter(&param_map, "token1")?,
-            pool_address: extract_address_parameter(&param_map, "pool")?,
+            token0_address: extract_parameter(&param_map, "token0")?,
+            token1_address: extract_parameter(&param_map, "token1")?,
+            pool_address: extract_parameter(&param_map, "pool")?,
+            fee: extract_parameter(&param_map, "fee")?,
         })
     }
 }
