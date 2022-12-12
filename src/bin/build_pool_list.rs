@@ -1,17 +1,32 @@
 use anyhow::Context;
+use clap::Parser;
 use router_rs::erc20_token::{Erc20TokenFinder, Token};
 use router_rs::pool;
 use router_rs::pool_factory;
 use router_rs::pool_factory::PoolCreationEvent;
 use serde::{Deserialize, Serialize};
-use std::env;
 use std::sync::Arc;
 use tokio::fs::File;
 use tokio::io::AsyncWriteExt;
 use tokio::task;
-
 use web3::types::Address;
 use web3::{Transport, Web3};
+
+#[derive(Parser, Debug)]
+#[command(about, long_about = None)]
+struct Args {
+    /// url of web3 node to connect to
+    #[arg(long)]
+    node_url: String,
+
+    /// output file name of collected pool descriptors
+    #[arg(long)]
+    descriptors_output: String,
+
+    /// max number of parallel processing of fetched pool creation events
+    #[arg(long, short, default_value_t = 10)]
+    max_parallel_pool_processing: usize,
+}
 
 #[derive(Serialize, Deserialize)]
 struct PoolDescriptors {
@@ -29,10 +44,10 @@ struct PoolDescriptor {
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
     env_logger::init();
+    let args = Args::parse();
 
-    let node_url = env::var("NODE_URL")?;
     let transport =
-        web3::transports::Http::new(&node_url).with_context(|| "http transport create")?;
+        web3::transports::Http::new(&args.node_url).with_context(|| "http transport create")?;
     let web3 = Web3::new(transport);
 
     let pool_factory = pool_factory::UniSwapPoolFactory::new(web3.clone())?;
@@ -48,7 +63,10 @@ async fn main() -> anyhow::Result<()> {
     let mut pool_descriptors = Vec::with_capacity(pool_creation_events.len());
 
     let mut task_set = task::JoinSet::new();
-    let task_limiter = Arc::new(tokio::sync::Semaphore::new(10));
+    // without task limiter, underlying http client fails with weird errors
+    let task_limiter = Arc::new(tokio::sync::Semaphore::new(
+        args.max_parallel_pool_processing,
+    ));
 
     for pool_creation_event in pool_creation_events {
         let web3 = web3.clone();
@@ -72,7 +90,7 @@ async fn main() -> anyhow::Result<()> {
         pool_descriptors.push(descriptor)
     }
 
-    let mut output = File::create("pool_descriptors.json").await?;
+    let mut output = File::create(&args.descriptors_output).await?;
     let json = serde_json::to_string_pretty(&PoolDescriptors {
         contracts: pool_descriptors,
     })?;
