@@ -1,5 +1,6 @@
 use anyhow::Context;
 use clap::Parser;
+use log::info;
 use router_rs::erc20_token::{Erc20TokenFinder, Token};
 use router_rs::pool_factory;
 use router_rs::pool_factory::PoolCreationEvent;
@@ -58,7 +59,7 @@ async fn main() -> anyhow::Result<()> {
         .await?;
 
     let token_lookup = Erc20TokenFinder::new(web3.clone())?;
-    println!("{} pool creation events total", pool_creation_events.len());
+    info!("{} pool creation events total", pool_creation_events.len());
     let mut pool_descriptors = Vec::with_capacity(pool_creation_events.len());
 
     let mut task_set = task::JoinSet::new();

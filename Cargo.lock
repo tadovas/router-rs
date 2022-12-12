@@ -1130,6 +1130,7 @@ dependencies = [
  "env_logger",
  "ethabi",
  "hex-literal",
+ "log",
  "serde",
  "serde_json",
  "tokio",

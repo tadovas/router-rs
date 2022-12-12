@@ -1,0 +1,420 @@
+{
+  "contracts": [
+    {
+      "token0": {
+        "name": "Dai Stablecoin",
+        "symbol": "DAI",
+        "address": "0x6b175474e89094c44da98b954eedeac495271d0f",
+        "decimals": 18
+      },
+      "token1": {
+        "name": "USD Coin",
+        "symbol": "USDC",
+        "address": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+        "decimals": 6
+      },
+      "fee": 500,
+      "address": "0x6c6bc977e13df9b0de53b251522280bb72383700"
+    },
+    {
+      "token0": {
+        "name": "Maker",
+        "symbol": "MKR",
+        "address": "0x9f8f72aa9304c8b593d555f12ef6589cc3a579a2",
+        "decimals": 18
+      },
+      "token1": {
+        "name": "Wrapped Ether",
+        "symbol": "WETH",
+        "address": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+        "decimals": 18
+      },
+      "fee": 500,
+      "address": "0x886072a44bdd944495eff38ace8ce75c1eacdaf6"
+    },
+    {
+      "token0": {
+        "name": "Uniswap",
+        "symbol": "UNI",
+        "address": "0x1f9840a85d5af5bf1d1762f925bdaddc4201f984",
+        "decimals": 18
+      },
+      "token1": {
+        "name": "Wrapped Ether",
+        "symbol": "WETH",
+        "address": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+        "decimals": 18
+      },
+      "fee": 3000,
+      "address": "0x1d42064fc4beb5f8aaf85f4617ae8b3b5b8bd801"
+    },
+    {
+      "token0": {
+        "name": "Wrapped BTC",
+        "symbol": "WBTC",
+        "address": "0x2260fac5e5542a773aa44fbcfedf7c193bc2c599",
+        "decimals": 8
+      },
+      "token1": {
+        "name": "Wrapped Ether",
+        "symbol": "WETH",
+        "address": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+        "decimals": 18
+      },
+      "fee": 3000,
+      "address": "0xcbcdf9626bc03e24f779434178a73a0b4bad62ed"
+    },
+    {
+      "token0": {
+        "name": "LQTY",
+        "symbol": "LQTY",
+        "address": "0x6dea81c8171d0ba574754ef6f8b412f2ed88c54d",
+        "decimals": 18
+      },
+      "token1": {
+        "name": "Wrapped Ether",
+        "symbol": "WETH",
+        "address": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+        "decimals": 18
+      },
+      "fee": 3000,
+      "address": "0xd1d5a4c0ea98971894772dcd6d2f1dc71083c44e"
+    },
+    {
+      "token0": {
+        "name": "Unisocks Edition 0",
+        "symbol": "SOCKS",
+        "address": "0x23b608675a2b2fb1890d3abbd85c5775c51691d5",
+        "decimals": 18
+      },
+      "token1": {
+        "name": "Wrapped Ether",
+        "symbol": "WETH",
+        "address": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+        "decimals": 18
+      },
+      "fee": 3000,
+      "address": "0xf83d5aaab14507a53f97d3c18bdb52c4a62efc40"
+    },
+    {
+      "token0": {
+        "name": "USD Coin",
+        "symbol": "USDC",
+        "address": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+        "decimals": 6
+      },
+      "token1": {
+        "name": "Wrapped Ether",
+        "symbol": "WETH",
+        "address": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+        "decimals": 18
+      },
+      "fee": 10000,
+      "address": "0x7bea39867e4169dbe237d55c8242a8f2fcdcc387"
+    },
+    {
+      "token0": {
+        "name": "PoolTogether",
+        "symbol": "POOL",
+        "address": "0x0cec1a9154ff802e7934fc916ed7ca50bde6844e",
+        "decimals": 18
+      },
+      "token1": {
+        "name": "Wrapped Ether",
+        "symbol": "WETH",
+        "address": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+        "decimals": 18
+      },
+      "fee": 3000,
+      "address": "0xff2bdf3044c601679dede16f5d4a460b35cebfee"
+    },
+    {
+      "token0": {
+        "name": "USD Coin",
+        "symbol": "USDC",
+        "address": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+        "decimals": 6
+      },
+      "token1": {
+        "name": "Wrapped Ether",
+        "symbol": "WETH",
+        "address": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+        "decimals": 18
+      },
+      "fee": 3000,
+      "address": "0x8ad599c3a0ff1de082011efddc58f1908eb6e6d8"
+    },
+    {
+      "token0": {
+        "name": "USD Coin",
+        "symbol": "USDC",
+        "address": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+        "decimals": 6
+      },
+      "token1": {
+        "name": "Tether USD",
+        "symbol": "USDT",
+        "address": "0xdac17f958d2ee523a2206206994597c13d831ec7",
+        "decimals": 6
+      },
+      "fee": 500,
+      "address": "0x7858e59e0c01ea06df3af3d20ac7b0003275d4bf"
+    },
+    {
+      "token0": {
+        "name": "Maker",
+        "symbol": "MKR",
+        "address": "0x9f8f72aa9304c8b593d555f12ef6589cc3a579a2",
+        "decimals": 18
+      },
+      "token1": {
+        "name": "Wrapped Ether",
+        "symbol": "WETH",
+        "address": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+        "decimals": 18
+      },
+      "fee": 3000,
+      "address": "0xe8c6c9227491c0a8156a0106a0204d881bb7e531"
+    },
+    {
+      "token0": {
+        "name": "Dai Stablecoin",
+        "symbol": "DAI",
+        "address": "0x6b175474e89094c44da98b954eedeac495271d0f",
+        "decimals": 18
+      },
+      "token1": {
+        "name": "Wrapped Ether",
+        "symbol": "WETH",
+        "address": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+        "decimals": 18
+      },
+      "fee": 3000,
+      "address": "0xc2e9f25be6257c210d7adf0d4cd6e3e881ba25f8"
+    },
+    {
+      "token0": {
+        "name": "Dai Stablecoin",
+        "symbol": "DAI",
+        "address": "0x6b175474e89094c44da98b954eedeac495271d0f",
+        "decimals": 18
+      },
+      "token1": {
+        "name": "Tether USD",
+        "symbol": "USDT",
+        "address": "0xdac17f958d2ee523a2206206994597c13d831ec7",
+        "decimals": 6
+      },
+      "fee": 500,
+      "address": "0x6f48eca74b38d2936b02ab603ff4e36a6c0e3a77"
+    },
+    {
+      "token0": {
+        "name": "yearn.finance",
+        "symbol": "YFI",
+        "address": "0x0bc529c00c6401aef6d220be8c6ea1667f6ad93e",
+        "decimals": 18
+      },
+      "token1": {
+        "name": "Wrapped Ether",
+        "symbol": "WETH",
+        "address": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+        "decimals": 18
+      },
+      "fee": 3000,
+      "address": "0x04916039b1f59d9745bf6e0a21f191d1e0a84287"
+    },
+    {
+      "token0": {
+        "name": "Compound",
+        "symbol": "COMP",
+        "address": "0xc00e94cb662c3520282e6f5717214004a7f26888",
+        "decimals": 18
+      },
+      "token1": {
+        "name": "Wrapped Ether",
+        "symbol": "WETH",
+        "address": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+        "decimals": 18
+      },
+      "fee": 10000,
+      "address": "0x5598931bfbb43eec686fa4b5b92b5152ebadc2f6"
+    },
+    {
+      "token0": {
+        "name": "Compound",
+        "symbol": "COMP",
+        "address": "0xc00e94cb662c3520282e6f5717214004a7f26888",
+        "decimals": 18
+      },
+      "token1": {
+        "name": "Wrapped Ether",
+        "symbol": "WETH",
+        "address": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+        "decimals": 18
+      },
+      "fee": 3000,
+      "address": "0xea4ba4ce14fdd287f380b55419b1c5b6c3f22ab6"
+    },
+    {
+      "token0": {
+        "name": "Wrapped Ether",
+        "symbol": "WETH",
+        "address": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+        "decimals": 18
+      },
+      "token1": {
+        "name": "Tether USD",
+        "symbol": "USDT",
+        "address": "0xdac17f958d2ee523a2206206994597c13d831ec7",
+        "decimals": 6
+      },
+      "fee": 3000,
+      "address": "0x4e68ccd3e89f51c3074ca5072bbac773960dfa36"
+    },
+    {
+      "token0": {
+        "name": "Dai Stablecoin",
+        "symbol": "DAI",
+        "address": "0x6b175474e89094c44da98b954eedeac495271d0f",
+        "decimals": 18
+      },
+      "token1": {
+        "name": "Fei USD",
+        "symbol": "FEI",
+        "address": "0x956f47f50a910163d8bf957cf5846d573e7f87ca",
+        "decimals": 18
+      },
+      "fee": 500,
+      "address": "0xbb2e5c2ff298fd96e166f90c8abacaf714df14f8"
+    },
+    {
+      "token0": {
+        "name": "Fei USD",
+        "symbol": "FEI",
+        "address": "0x956f47f50a910163d8bf957cf5846d573e7f87ca",
+        "decimals": 18
+      },
+      "token1": {
+        "name": "Wrapped Ether",
+        "symbol": "WETH",
+        "address": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+        "decimals": 18
+      },
+      "fee": 500,
+      "address": "0xdc7b403e2e967eaf6c97d79316d285b8a112fda7"
+    },
+    {
+      "token0": {
+        "name": "Dai Stablecoin",
+        "symbol": "DAI",
+        "address": "0x6b175474e89094c44da98b954eedeac495271d0f",
+        "decimals": 18
+      },
+      "token1": {
+        "name": "Uniswap V2",
+        "symbol": "UNI-V2",
+        "address": "0xdc2b82bc1106c9c5286e59344896fb0ceb932f53",
+        "decimals": 18
+      },
+      "fee": 3000,
+      "address": "0x1470ee019f673d0a4ec2c7cd0322a8c17c4f1a61"
+    },
+    {
+      "token0": {
+        "name": "Wrapped BTC",
+        "symbol": "WBTC",
+        "address": "0x2260fac5e5542a773aa44fbcfedf7c193bc2c599",
+        "decimals": 8
+      },
+      "token1": {
+        "name": "Uniswap V3 Positions NFT-V1",
+        "symbol": "UNI-V3-POS",
+        "address": "0xc36442b4a4522e871399cd717abdd847ab11fe88",
+        "decimals": null
+      },
+      "fee": 3000,
+      "address": "0x1c74dde716d3f2a1df5097b7c2543c5d97cfa4d3"
+    },
+    {
+      "token0": {
+        "name": "Rai Reflex Index",
+        "symbol": "RAI",
+        "address": "0x03ab458634910aad20ef5f1c8ee96f1d6ac54919",
+        "decimals": 18
+      },
+      "token1": {
+        "name": "Wrapped Ether",
+        "symbol": "WETH",
+        "address": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+        "decimals": 18
+      },
+      "fee": 3000,
+      "address": "0x14de8287adc90f0f95bf567c0707670de52e3813"
+    },
+    {
+      "token0": {
+        "name": "Flex Ungovernance Token",
+        "symbol": "FLX",
+        "address": "0x6243d8cea23066d098a15582d81a598b4e8391f4",
+        "decimals": 18
+      },
+      "token1": {
+        "name": "Wrapped Ether",
+        "symbol": "WETH",
+        "address": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+        "decimals": 18
+      },
+      "fee": 3000,
+      "address": "0x8581788cef3b7ee7313fea15fe279dc2f6c43899"
+    },
+    {
+      "token0": {
+        "name": "Rai Reflex Index",
+        "symbol": "RAI",
+        "address": "0x03ab458634910aad20ef5f1c8ee96f1d6ac54919",
+        "decimals": 18
+      },
+      "token1": {
+        "name": "Wrapped Ether",
+        "symbol": "WETH",
+        "address": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+        "decimals": 18
+      },
+      "fee": 500,
+      "address": "0x0dc9877f6024ccf16a470a74176c9260beb83ab6"
+    },
+    {
+      "token0": {
+        "name": "ETH 2x Flexible Leverage Index",
+        "symbol": "ETH2x-FLI",
+        "address": "0xaa6e8127831c9de45ae56bb1b0d4d4da6e5665bd",
+        "decimals": 18
+      },
+      "token1": {
+        "name": "Wrapped Ether",
+        "symbol": "WETH",
+        "address": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+        "decimals": 18
+      },
+      "fee": 3000,
+      "address": "0x151ccb92bc1ed5c6d0f9adb5cec4763ceb66ac7f"
+    },
+    {
+      "token0": {
+        "name": "Rai Reflex Index",
+        "symbol": "RAI",
+        "address": "0x03ab458634910aad20ef5f1c8ee96f1d6ac54919",
+        "decimals": 18
+      },
+      "token1": {
+        "name": "Dai Stablecoin",
+        "symbol": "DAI",
+        "address": "0x6b175474e89094c44da98b954eedeac495271d0f",
+        "decimals": 18
+      },
+      "fee": 500,
+      "address": "0xcb0c5d9d92f4f2f80cce7aa271a1e148c226e19d"
+    }
+  ]
+}
