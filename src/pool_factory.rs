@@ -26,33 +26,11 @@ impl<T: Transport> UniSwapPoolFactory<T> {
         })
     }
 
-    pub async fn print_some_info(&self) -> anyhow::Result<()> {
-        println!(
-            "Version: {}, peer count: {}, chain id: {}",
-            self.web3
-                .net()
-                .version()
-                .await
-                .with_context(|| "version fetch")?,
-            self.web3
-                .net()
-                .peer_count()
-                .await
-                .with_context(|| "peer count")?,
-            self.web3
-                .eth()
-                .chain_id()
-                .await
-                .with_context(|| "chain id")?
-        );
-        Ok(())
-    }
-
     pub async fn fetch_pool_creation_logs(
         &self,
         from: BlockNumber,
         to: Option<BlockNumber>,
-    ) -> anyhow::Result<Vec<LogCreationEvent>> {
+    ) -> anyhow::Result<Vec<PoolCreationEvent>> {
         let pool_created_event = self.contract.abi().event("PoolCreated")?;
         let mut filter = FilterBuilder::default()
             .topics(Some(vec![pool_created_event.signature()]), None, None, None)
@@ -78,18 +56,18 @@ impl<T: Transport> UniSwapPoolFactory<T> {
                     })?
                     .try_into()
             })
-            .collect::<anyhow::Result<Vec<LogCreationEvent>>>()
+            .collect::<anyhow::Result<Vec<PoolCreationEvent>>>()
     }
 }
 
 #[derive(Debug, Clone)]
-pub struct LogCreationEvent {
+pub struct PoolCreationEvent {
     pub token0_address: Address,
     pub token1_address: Address,
     pub pool_address: Address,
 }
 
-impl TryFrom<Log> for LogCreationEvent {
+impl TryFrom<Log> for PoolCreationEvent {
     type Error = anyhow::Error;
 
     fn try_from(log: Log) -> Result<Self, Self::Error> {
