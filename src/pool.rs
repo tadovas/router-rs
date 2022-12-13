@@ -6,17 +6,22 @@ use web3::{Transport, Web3};
 
 const POOL_ABI_BYTES: &[u8] = include_bytes!("abi/UniswapV3PoolAbi.json");
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct DescriptorList {
-    pub contracts: Vec<Descriptor>,
+    pub descriptors: Vec<Descriptor>,
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Descriptor {
     pub token0: Token,
     pub token1: Token,
     pub fee: u32,
     pub address: Address,
+}
+
+#[derive(Debug, Clone)]
+pub struct Slot0 {
+    pub info: String,
 }
 
 pub struct Pool<T: Transport> {
@@ -30,6 +35,12 @@ impl<T: Transport> Pool<T> {
         Ok(Self {
             contract,
             descriptor,
+        })
+    }
+
+    pub async fn slot0(&self) -> anyhow::Result<Slot0> {
+        Ok(Slot0 {
+            info: "some info".to_string(),
         })
     }
 }

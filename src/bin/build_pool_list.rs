@@ -1,6 +1,7 @@
 use anyhow::Context;
 use clap::Parser;
 use log::info;
+use router_rs::env_log::setup_env_logger;
 use router_rs::erc20_token::Erc20TokenFinder;
 use router_rs::pool::{Descriptor, DescriptorList};
 use router_rs::pool_factory;
@@ -29,7 +30,7 @@ struct Args {
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
-    env_logger::init();
+    setup_env_logger();
     let args = Args::parse();
 
     let transport =
@@ -77,7 +78,7 @@ async fn main() -> anyhow::Result<()> {
 
     let mut output = File::create(&args.descriptors_output).await?;
     let json = serde_json::to_string_pretty(&DescriptorList {
-        contracts: pool_descriptors,
+        descriptors: pool_descriptors,
     })?;
 
     output.write_all(json.as_bytes()).await?;
