@@ -18,5 +18,7 @@ clap = { version = "4.0.29", features = ["derive"] }
 log = "0.4.17"
 rust_decimal = { version = "1.27.0" , features = ["maths"] }
 rust_decimal_macros = "1.27.0"
+lazy_static = "1.4.0"
+num-traits = "0.2.15"
 
 

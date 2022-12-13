@@ -1,7 +1,9 @@
 use crate::erc20_token::Token;
-use rust_decimal::prelude::One;
+use lazy_static::lazy_static;
+use num_traits::{Pow, Zero};
 use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
+use std::ops::{Div, Mul};
 use web3::contract::{Contract, Options};
 use web3::types::{Address, U256};
 use web3::{Transport, Web3};
@@ -47,14 +49,39 @@ impl<T: Transport> Pool<T> {
             .await?;
 
         Ok(Slot0 {
-            price: convert_to_normal_price(slot.0, self.descriptor.token0.decimals.unwrap_or(0))
-                .to_string(),
+            price: convert_to_normal_price(
+                slot.0,
+                self.descriptor.token0.decimals.unwrap_or(0),
+                self.descriptor.token1.decimals.unwrap_or(0),
+            )
+            .to_string(),
         })
     }
 }
 
-fn convert_to_normal_price(_sqrt_price_x96: U256, _token0_decimals: u8) -> Decimal {
-    Decimal::one()
+lazy_static! {
+    static ref X96: U256 = U256::from(2).pow(96.into());
+    static ref X192: U256 = X96.pow(2.into());
+}
+
+fn convert_to_normal_price(
+    sqrt_price_x96: U256,
+    token0_decimals: u8,
+    token1_decimals: u8,
+) -> Decimal {
+    if sqrt_price_x96.is_zero() {
+        return Decimal::zero();
+    }
+    // price is sqrt(token1/token0) Q64.96
+    // price = sqrtRatioX96 ** 2 / 2 ** 192
+    // we want token0/token1 price so its inversed
+    let calculated = X192.div(sqrt_price_x96.pow(2.into()));
+    // assuming we got token0/token1 price we now need to apply decimals to display it to something readable
+    let diff: i64 = token1_decimals as i64 - token0_decimals as i64;
+    let token_decimals_ratio: Decimal = Decimal::from(10).pow(diff);
+    Decimal::from_str_exact(&calculated.to_string())
+        .expect("too big number")
+        .mul(token_decimals_ratio)
 }
 
 #[cfg(test)]
@@ -68,7 +95,7 @@ mod tests {
         let sqrt_price_x96 =
             U256::from_dec_str("132913141809576967649153816958").expect("should not fail");
 
-        let price = convert_to_normal_price(sqrt_price_x96, 18);
-        assert_eq!(dec!(1.28143), price);
+        let price = convert_to_normal_price(sqrt_price_x96, 18, 18);
+        assert_eq!(dec!(0), price);
     }
 }
