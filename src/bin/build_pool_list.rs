@@ -1,15 +1,14 @@
 use anyhow::Context;
 use clap::Parser;
 use log::info;
-use router_rs::erc20_token::{Erc20TokenFinder, Token};
+use router_rs::erc20_token::Erc20TokenFinder;
+use router_rs::pool::{Descriptor, DescriptorList};
 use router_rs::pool_factory;
 use router_rs::pool_factory::PoolCreationEvent;
-use serde::{Deserialize, Serialize};
 use std::sync::Arc;
 use tokio::fs::File;
 use tokio::io::AsyncWriteExt;
 use tokio::task;
-use web3::types::Address;
 use web3::{Transport, Web3};
 
 #[derive(Parser, Debug)]
@@ -26,19 +25,6 @@ struct Args {
     /// max number of parallel processing of fetched pool creation events
     #[arg(long, short, default_value_t = 10)]
     max_parallel_pool_processing: usize,
-}
-
-#[derive(Serialize, Deserialize)]
-struct PoolDescriptors {
-    contracts: Vec<PoolDescriptor>,
-}
-
-#[derive(Serialize, Deserialize)]
-struct PoolDescriptor {
-    token0: Token,
-    token1: Token,
-    fee: u32,
-    address: Address,
 }
 
 #[tokio::main]
@@ -90,20 +76,20 @@ async fn main() -> anyhow::Result<()> {
     }
 
     let mut output = File::create(&args.descriptors_output).await?;
-    let json = serde_json::to_string_pretty(&PoolDescriptors {
+    let json = serde_json::to_string_pretty(&DescriptorList {
         contracts: pool_descriptors,
     })?;
 
     output.write_all(json.as_bytes()).await?;
-
+    info!("Pool descriptors written to {}", args.descriptors_output);
     Ok(())
 }
 
 async fn build_pool_descriptor<T: Transport>(
     pool_creation_event: PoolCreationEvent,
     token_lookup: Erc20TokenFinder<T>,
-) -> anyhow::Result<PoolDescriptor> {
-    Ok(PoolDescriptor {
+) -> anyhow::Result<Descriptor> {
+    Ok(Descriptor {
         address: pool_creation_event.pool_address,
         token0: token_lookup
             .find(pool_creation_event.token0_address)
