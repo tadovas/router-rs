@@ -2,9 +2,9 @@ use clap::Parser;
 use log::info;
 use router_rs::env_log::setup_env_logger;
 use router_rs::pool;
+use rust_decimal::Decimal;
 use tokio::fs::File;
 use tokio::io::AsyncReadExt;
-use web3::futures::{FutureExt, TryFutureExt};
 
 #[derive(Parser, Debug)]
 #[command(about, long_about = None)]
@@ -35,8 +35,11 @@ async fn main() -> anyhow::Result<()> {
         let pool = pool::Pool::new(web3.clone(), descriptor.clone())?;
         let slot0 = pool.slot0().await?;
         info!(
-            "Pool {} -> {} Slot0: {:?}",
-            descriptor.token0.symbol, descriptor.token1.symbol, slot0
+            "Pool {} -> {} [{}%] Slot0: {:?}",
+            descriptor.token0.symbol,
+            descriptor.token1.symbol,
+            Decimal::new(descriptor.fee.into(), 4).normalize(),
+            slot0
         )
     }
 
