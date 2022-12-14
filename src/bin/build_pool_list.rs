@@ -10,6 +10,7 @@ use std::sync::Arc;
 use tokio::fs::File;
 use tokio::io::AsyncWriteExt;
 use tokio::task;
+use web3::types::BlockNumber;
 use web3::{Transport, Web3};
 
 #[derive(Parser, Debug)]
@@ -22,6 +23,10 @@ struct Args {
     /// output file name of collected pool descriptors
     #[arg(long)]
     descriptors_output: String,
+
+    /// upper block limit to scan events to (default - latest)
+    #[arg(long)]
+    to_block_num: Option<u64>,
 
     /// max number of parallel processing of fetched pool creation events
     #[arg(long, short, default_value_t = 10)]
@@ -41,7 +46,9 @@ async fn main() -> anyhow::Result<()> {
     let pool_creation_events = pool_factory
         .fetch_pool_creation_logs(
             pool_factory::POOL_FACTORY_CREATION_BLOCK.into(),
-            Some((pool_factory::POOL_FACTORY_CREATION_BLOCK + 6000).into()),
+            args.to_block_num
+                .map(|v| BlockNumber::Number(v.into()))
+                .unwrap_or(BlockNumber::Latest),
         )
         .await?;
 

@@ -30,21 +30,19 @@ impl<T: Transport> UniSwapPoolFactory<T> {
     pub async fn fetch_pool_creation_logs(
         &self,
         from: BlockNumber,
-        to: Option<BlockNumber>,
+        to: BlockNumber,
     ) -> anyhow::Result<Vec<PoolCreationEvent>> {
         let pool_created_event = self.contract.abi().event("PoolCreated")?;
-        let mut filter = FilterBuilder::default()
+        let filter = FilterBuilder::default()
             .topics(Some(vec![pool_created_event.signature()]), None, None, None)
-            .from_block(from);
-
-        if let Some(block_number) = to {
-            filter = filter.to_block(block_number)
-        }
+            .from_block(from)
+            .to_block(to)
+            .build();
 
         let logs = self
             .web3
             .eth()
-            .logs(filter.build())
+            .logs(filter)
             .await
             .with_context(|| "eth raw logs")?;
 
