@@ -20,5 +20,9 @@ rust_decimal = { version = "1.27.0" , features = ["maths"] }
 lazy_static = "1.4.0"
 num-traits = "0.2.15"
 num-bigfloat = "1.6.1"
+actix-web = "4.2.1"
+juniper_actix = "0.4.0"
+juniper = "0.15.10"
+futures = "0.3.25"
 
 
