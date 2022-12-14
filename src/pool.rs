@@ -1,8 +1,9 @@
 use crate::erc20_token::Token;
-use lazy_static::lazy_static;
-use rust_decimal::Decimal;
+use anyhow::anyhow;
+use num_bigfloat::BigFloat;
+use num_traits::Pow;
 use serde::{Deserialize, Serialize};
-use std::ops::{Div, Mul};
+use std::str::FromStr;
 use web3::contract::{Contract, Options};
 use web3::types::{Address, U256};
 use web3::{Transport, Web3};
@@ -24,7 +25,7 @@ pub struct Descriptor {
 
 #[derive(Debug, Clone)]
 pub struct Slot0 {
-    pub price: Option<Decimal>,
+    pub price: Option<BigFloat>,
 }
 
 pub struct Pool<T: Transport> {
@@ -52,51 +53,50 @@ impl<T: Transport> Pool<T> {
                 slot.0,
                 self.descriptor.token0.decimals.unwrap_or(0),
                 self.descriptor.token1.decimals.unwrap_or(0),
-            ),
+            )?,
         })
     }
-}
-
-lazy_static! {
-    static ref X96: U256 = U256::from(2).pow(96.into());
-    static ref X192: U256 = X96.pow(2.into());
 }
 
 fn convert_to_normal_price(
     sqrt_price_x96: U256,
     token0_decimals: u8,
     token1_decimals: u8,
-) -> Option<Decimal> {
+) -> anyhow::Result<Option<BigFloat>> {
     if sqrt_price_x96.is_zero() {
         // non-initialized contract
-        return None;
+        return Ok(None);
     }
     // price is sqrt(token1/token0) Q64.96
     // price = sqrtRatioX96 ** 2 / 2 ** 192
-    // we want token0/token1 price so its inversed
-    let calculated = X192.div(sqrt_price_x96.pow(2.into()));
+    let x192: BigFloat = BigFloat::from(2).pow(192.into());
+    let calculated = BigFloat::from_str(&sqrt_price_x96.to_string())
+        .map_err(|e| anyhow!("U256 -> BigFloat: {}", e))?
+        .pow(2.into())
+        / x192;
     // assuming we got token0/token1 price we now need to apply decimals to display it to something readable
-    let diff: i64 = token1_decimals as i64 - token0_decimals as i64;
-    let token_decimals_ratio: Decimal = Decimal::from(10).pow(diff);
-    Some(
-        Decimal::from_str_exact(&calculated.to_string())
-            .expect("too big number")
-            .mul(token_decimals_ratio),
-    )
+    let diff: i64 = token0_decimals as i64 - token1_decimals as i64;
+    let token_decimals_ratio = BigFloat::from(10).pow(diff.into());
+    let price = calculated * token_decimals_ratio;
+    Ok(Some(price))
 }
 
 #[cfg(test)]
 mod tests {
     use crate::pool::convert_to_normal_price;
-    use rust_decimal_macros::dec;
     use web3::types::U256;
 
     #[test]
     fn test_sqrtx96_is_converted_correctly() {
         let sqrt_price_x96 =
-            U256::from_dec_str("132913141809576967649153816958").expect("should not fail");
+            U256::from_dec_str("2889297909017548779246569").expect("should not fail");
 
-        let price = convert_to_normal_price(sqrt_price_x96, 18, 18);
-        assert_eq!(dec!(0), price);
+        let price = convert_to_normal_price(sqrt_price_x96, 18, 6)
+            .expect("not error")
+            .expect("not None");
+        assert_eq!(
+            "1.329919883246710696663783607187959335420e+3",
+            price.to_string()
+        );
     }
 }

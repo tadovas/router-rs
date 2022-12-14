@@ -904,6 +904,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "num-bigfloat"
+version = "1.6.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "da65fc937a04931ae5f0254d0ff5c1b8f1e520e914741493848cafdd386d1ac5"
+dependencies = [
+ "num-traits",
+ "rand",
+ "serde",
+]
+
+[[package]]
 name = "num-traits"
 version = "0.2.15"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1299,9 +1310,9 @@ dependencies = [
  "hex-literal",
  "lazy_static",
  "log",
+ "num-bigfloat",
  "num-traits",
  "rust_decimal",
- "rust_decimal_macros",
  "serde",
  "serde_json",
  "tokio",
@@ -1324,16 +1335,6 @@ dependencies = [
  "rkyv",
  "serde",
  "serde_json",
-]
-
-[[package]]
-name = "rust_decimal_macros"
-version = "1.27.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5a7e2dba1342e9f1166786a4329ba0d6d6b8d9db7e81d702ec9ba3b39591ddff"
-dependencies = [
- "quote",
- "rust_decimal",
 ]
 
 [[package]]
