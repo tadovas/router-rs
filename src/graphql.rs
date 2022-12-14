@@ -8,13 +8,6 @@ use juniper::{graphql_object, EmptyMutation, EmptySubscription, GraphQLObject, R
 use juniper_actix::{graphiql_handler, graphql_handler, playground_handler};
 use std::sync::Arc;
 
-pub struct QueryContext {
-    pub schema: Schema,
-    pub uniswap_router: Arc<Router>,
-}
-
-impl juniper::Context for QueryContext {}
-
 #[derive(Clone, GraphQLObject)]
 pub struct Token {
     pub address: String,
@@ -50,6 +43,13 @@ impl From<&uniswap_router::Pool> for Pool {
         }
     }
 }
+
+pub struct QueryContext {
+    pub schema: Schema,
+    pub uniswap_router: Arc<Router>,
+}
+
+impl juniper::Context for QueryContext {}
 
 pub struct Query;
 #[graphql_object(context = QueryContext)]

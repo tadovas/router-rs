@@ -11,12 +11,12 @@ pub const POOL_FACTORY_CREATION_BLOCK: u64 = 12369621;
 const UNISWAP_V3_POOL_FACTORY: &str = "0x1F98431c8aD98523631AE4a59f267346ea31F984";
 const CONTRACT_ABI: &[u8] = include_bytes!("abi/UniswapV3PoolFactoryAbi.json");
 
-pub struct UniSwapPoolFactory<T: Transport> {
+pub struct UniswapPoolFactoryContract<T: Transport> {
     web3: Web3<T>,
     contract: Contract<T>,
 }
 
-impl<T: Transport> UniSwapPoolFactory<T> {
+impl<T: Transport> UniswapPoolFactoryContract<T> {
     pub fn new(web3: Web3<T>) -> anyhow::Result<Self> {
         let pool_factory_contract =
             Contract::from_json(web3.eth(), UNISWAP_V3_POOL_FACTORY.parse()?, CONTRACT_ABI)
@@ -27,6 +27,9 @@ impl<T: Transport> UniSwapPoolFactory<T> {
         })
     }
 
+    // fetches pool creation logs starting from block on which factory itself was deployed
+    // (no need to look further back in history)
+    // optionally upper block can be provided to limit event count (at current time totally over 9k pools created)
     pub async fn fetch_pool_creation_logs(
         &self,
         from: BlockNumber,
@@ -59,6 +62,7 @@ impl<T: Transport> UniSwapPoolFactory<T> {
     }
 }
 
+// describes pool creation event
 #[derive(Debug, Clone)]
 pub struct PoolCreationEvent {
     pub token0_address: Address,

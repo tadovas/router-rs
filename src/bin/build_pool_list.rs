@@ -1,7 +1,7 @@
 use anyhow::Context;
 use clap::Parser;
 use log::info;
-use router_rs::env_log::setup_env_logger;
+use router_rs::env_log::init_with_default_level;
 use router_rs::erc20_token::Erc20TokenFinder;
 use router_rs::pool::{Descriptor, DescriptorList};
 use router_rs::pool_factory;
@@ -35,14 +35,14 @@ struct Args {
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
-    setup_env_logger();
+    init_with_default_level();
     let args = Args::parse();
 
     let transport =
         web3::transports::Http::new(&args.node_url).with_context(|| "http transport create")?;
     let web3 = Web3::new(transport);
 
-    let pool_factory = pool_factory::UniSwapPoolFactory::new(web3.clone())?;
+    let pool_factory = pool_factory::UniswapPoolFactoryContract::new(web3.clone())?;
     let pool_creation_events = pool_factory
         .fetch_pool_creation_logs(
             pool_factory::POOL_FACTORY_CREATION_BLOCK.into(),

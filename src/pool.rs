@@ -10,11 +10,13 @@ use web3::{Transport, Web3};
 
 const POOL_ABI_BYTES: &[u8] = include_bytes!("abi/UniswapV3PoolAbi.json");
 
+// Root object for serde to/from JSON
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct DescriptorList {
     pub descriptors: Vec<Descriptor>,
 }
 
+// Uniswap V3 Pool descriptor with basic information
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Descriptor {
     pub token0: Token,
@@ -23,17 +25,19 @@ pub struct Descriptor {
     pub address: Address,
 }
 
+// Slot0 query result (with minimal required fields)
 #[derive(Debug, Clone)]
 pub struct Slot0 {
     pub price: Option<BigFloat>,
 }
 
-pub struct Pool<T: Transport> {
+// Pool contract is used to interact with deployed contracts
+pub struct PoolContract<T: Transport> {
     contract: Contract<T>,
     descriptor: Descriptor,
 }
 
-impl<T: Transport> Pool<T> {
+impl<T: Transport> PoolContract<T> {
     pub fn new(web3: Web3<T>, descriptor: Descriptor) -> anyhow::Result<Self> {
         let contract = Contract::from_json(web3.eth(), descriptor.address, POOL_ABI_BYTES)?;
         Ok(Self {
@@ -58,6 +62,7 @@ impl<T: Transport> Pool<T> {
     }
 }
 
+// converts to "normal" price, given the sqrtPriceX96 value (which can be 0 if contract is not initialized)
 fn convert_to_normal_price(
     sqrt_price_x96: U256,
     token0_decimals: u8,

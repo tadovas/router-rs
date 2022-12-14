@@ -5,7 +5,7 @@ use clap::Parser;
 use futures::future::join_all;
 use num_bigfloat::BigFloat;
 use num_traits::Float;
-use router_rs::env_log::setup_env_logger;
+use router_rs::env_log::init_with_default_level;
 use router_rs::graphql::{graphiql_route, graphql_route, playground_route, schema, QueryContext};
 use router_rs::pool;
 use router_rs::pool::Descriptor;
@@ -35,7 +35,7 @@ struct Args {
 
 #[actix_web::main]
 async fn main() -> anyhow::Result<()> {
-    setup_env_logger();
+    init_with_default_level();
 
     let args = Args::parse();
 
@@ -83,7 +83,7 @@ async fn map_into_pool<T: Transport>(
     descriptor: Descriptor,
     web3: &Web3<T>,
 ) -> anyhow::Result<Pool> {
-    let pool_contract = pool::Pool::new(web3.clone(), descriptor.clone())?;
+    let pool_contract = pool::PoolContract::new(web3.clone(), descriptor.clone())?;
     let slot0 = pool_contract.slot0().await?;
 
     Ok(Pool {

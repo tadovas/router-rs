@@ -8,9 +8,12 @@ use web3::contract::{Contract, Error, Options};
 use web3::types::Address;
 use web3::{Transport, Web3};
 
+// ERC20 Contract ABI (name and symbol as bytes32)
 const CONTRACT_ABI: &[u8] = include_bytes!("abi/ERC20TokenAbi.json");
+// ERC20 minimal contract ABI (for fallbacking to string type of name or symbol)
 const CONTRACT_ABI_FALLBACK: &[u8] = include_bytes!("abi/ERC20StringFallback.json");
 
+// Token descriptor with basic data
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Token {
     pub name: String,
@@ -19,6 +22,8 @@ pub struct Token {
     pub decimals: Option<u8>,
 }
 
+// Token finder fetches Token descriptors for given address by using contract and also caches results
+// for faster lookups
 #[derive(Clone)]
 pub struct Erc20TokenFinder<T: Transport> {
     web3: Web3<T>,
@@ -57,8 +62,11 @@ impl<T: Transport> Erc20TokenFinder<T> {
         let contract = Contract::new(self.web3.eth(), addr, self.contract.clone());
         let fallback_contract =
             Contract::new(self.web3.eth(), addr, self.fallback_contract.clone());
+
         let symbol = Self::try_fetch_readable(&contract, &fallback_contract, "symbol").await?;
         let name = Self::try_fetch_readable(&contract, &fallback_contract, "name").await?;
+
+        // some tokens doesn't have decimals so query fails, therefore we treat error as decimals are not present
         let decimals: Option<u8> = contract
             .query("decimals", (), None, Options::default(), None)
             .await
@@ -70,6 +78,8 @@ impl<T: Transport> Erc20TokenFinder<T> {
             symbol,
         })
     }
+    // a workaround to try fetch token name or symbol as bytes32 first and fallback to string type
+    // if it fails
     async fn try_fetch_readable(
         contract: &Contract<T>,
         fallback: &Contract<T>,
@@ -89,6 +99,7 @@ impl<T: Transport> Erc20TokenFinder<T> {
     }
 }
 
+// a little hack to handle bytes32 as string and also detect possible "string" type
 enum Bytes32Result {
     Success(String),
     RetryWithFallback,
