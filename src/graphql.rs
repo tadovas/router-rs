@@ -18,7 +18,7 @@ pub struct Token {
 impl From<&erc20_token::Token> for Token {
     fn from(v: &erc20_token::Token) -> Self {
         Self {
-            address: v.address.to_string(),
+            address: format!("{:?}", v.address),
             symbol: v.symbol.clone(),
             name: v.name.clone(),
         }
@@ -30,16 +30,18 @@ pub struct Pool {
     pub address: String,
     pub token0: Token,
     pub token1: Token,
-    pub price: f64,
+    pub price: String,
+    pub fee: String,
 }
 
 impl From<&uniswap_router::Pool> for Pool {
     fn from(v: &uniswap_router::Pool) -> Self {
         Self {
-            address: v.descriptor.address.to_string(),
+            address: format!("{:?}", v.descriptor.address),
             token0: (&v.descriptor.token0).into(),
             token1: (&v.descriptor.token1).into(),
-            price: v.price.to_f64(),
+            price: format!("{}", v.price),
+            fee: format!("{}%", v.fee),
         }
     }
 }

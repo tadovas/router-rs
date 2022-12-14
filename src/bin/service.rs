@@ -50,7 +50,7 @@ async fn main() -> anyhow::Result<()> {
     let pool_futures = pool_descriptors
         .descriptors
         .into_iter()
-        .map(|v| map_into_pool(v, &web3));
+        .map(|v| map_into_pool(v, &web3)); // maps descriptor into router::Pool and also fetches latest price
 
     let pools = join_all(pool_futures)
         .await
