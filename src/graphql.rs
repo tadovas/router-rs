@@ -4,13 +4,18 @@ use actix_web::{
     web::{self, Data},
     Error, HttpResponse,
 };
-use juniper::{graphql_object, EmptyMutation, EmptySubscription, GraphQLObject, RootNode};
+use anyhow::anyhow;
+use juniper::{
+    graphql_object, EmptyMutation, EmptySubscription, FieldResult, GraphQLInputObject,
+    GraphQLObject, GraphQLScalarValue, RootNode,
+};
 use juniper_actix::{graphiql_handler, graphql_handler, playground_handler};
 use std::sync::Arc;
+use web3::types::Address;
 
 #[derive(Clone, GraphQLObject)]
 pub struct Token {
-    pub address: String,
+    pub address: ID,
     pub symbol: String,
     pub name: String,
 }
@@ -18,7 +23,7 @@ pub struct Token {
 impl From<&erc20_token::Token> for Token {
     fn from(v: &erc20_token::Token) -> Self {
         Self {
-            address: format!("{:?}", v.address),
+            address: v.address.into(),
             symbol: v.symbol.clone(),
             name: v.name.clone(),
         }
@@ -27,7 +32,7 @@ impl From<&erc20_token::Token> for Token {
 
 #[derive(Clone, GraphQLObject)]
 pub struct Pool {
-    pub address: String,
+    pub address: ID,
     pub token0: Token,
     pub token1: Token,
     pub price: String,
@@ -37,13 +42,33 @@ pub struct Pool {
 impl From<&uniswap_router::Pool> for Pool {
     fn from(v: &uniswap_router::Pool) -> Self {
         Self {
-            address: format!("{:?}", v.descriptor.address),
+            address: v.descriptor.address.into(),
             token0: (&v.descriptor.token0).into(),
             token1: (&v.descriptor.token1).into(),
             price: format!("{}", v.price),
             fee: format!("{}%", v.fee),
         }
     }
+}
+
+#[derive(Clone, GraphQLScalarValue)]
+pub struct ID(String);
+
+impl From<Address> for ID {
+    fn from(address: Address) -> Self {
+        ID(format!("{:?}", address)) // we need full address, default Display truncates address to few symbols
+    }
+}
+
+#[derive(Clone, GraphQLInputObject)]
+pub struct RouteInput {
+    pub from_token: ID,
+    pub to_token: ID,
+}
+
+#[derive(Clone, Default, GraphQLObject)]
+pub struct Route {
+    pub path: Vec<Token>,
 }
 
 pub struct QueryContext {
@@ -71,6 +96,26 @@ impl Query {
             .iter()
             .map(Token::from)
             .collect()
+    }
+
+    fn route(input: RouteInput, context: &QueryContext) -> FieldResult<Route> {
+        let from: Address = input
+            .from_token
+            .0
+            .parse()
+            .map_err(|err| anyhow!("input.from_token: {}", err))?;
+        let to: Address = input
+            .to_token
+            .0
+            .parse()
+            .map_err(|err| anyhow!("input.to_token: {}", err))?;
+        Ok(context
+            .uniswap_router
+            .find_route(from, to)
+            .map(|v| Route {
+                path: v.iter().map(Token::from).collect(),
+            })
+            .map_err(|err| anyhow!("routing error: {}", err))?)
     }
 }
 
