@@ -47,7 +47,6 @@ impl From<&uniswap_router::Pool> for Pool {
 }
 
 pub struct QueryContext {
-    pub schema: Schema,
     pub uniswap_router: Arc<Router>,
 }
 
@@ -62,6 +61,15 @@ impl Query {
             .get_available_pools()
             .iter()
             .map(Pool::from)
+            .collect()
+    }
+
+    fn tokens(context: &QueryContext) -> Vec<Token> {
+        context
+            .uniswap_router
+            .get_available_tokens()
+            .iter()
+            .map(Token::from)
             .collect()
     }
 }
@@ -88,6 +96,7 @@ pub async fn graphql_route(
     req: actix_web::HttpRequest,
     payload: web::Payload,
     query_ctx: Data<QueryContext>,
+    schema: Data<Schema>,
 ) -> Result<HttpResponse, Error> {
-    graphql_handler(&query_ctx.schema, &query_ctx, req, payload).await
+    graphql_handler(&schema, &query_ctx, req, payload).await
 }

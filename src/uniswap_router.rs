@@ -1,4 +1,6 @@
+use crate::erc20_token::Token;
 use crate::pool::Descriptor;
+use itertools::Itertools;
 use num_bigfloat::BigFloat;
 use rust_decimal::Decimal;
 
@@ -22,5 +24,18 @@ impl Router {
 
     pub fn get_available_pools(&self) -> &[Pool] {
         &self.pools
+    }
+
+    pub fn get_available_tokens(&self) -> Vec<Token> {
+        self.pools
+            .iter()
+            .flat_map(|pool| {
+                [
+                    pool.descriptor.token0.clone(),
+                    pool.descriptor.token1.clone(),
+                ]
+            })
+            .unique_by(|t| t.address)
+            .collect()
     }
 }

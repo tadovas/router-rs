@@ -61,9 +61,9 @@ async fn main() -> anyhow::Result<()> {
     HttpServer::new(move || {
         App::new()
             .app_data(Data::new(QueryContext {
-                schema: schema(),
                 uniswap_router: uniswap_router.clone(),
             }))
+            .app_data(Data::new(schema()))
             .wrap(middleware::Logger::default())
             .service(
                 web::resource("/graphql")
